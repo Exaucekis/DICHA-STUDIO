@@ -1,0 +1,449 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ContentStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum VideoPlatform {
+  YOUTUBE
+  VIMEO
+  EXTERNAL
+  SELF_HOSTED
+}
+
+enum QuoteStatus {
+  NEW
+  IN_PROGRESS
+  CONTACTED
+  VALIDATED
+  REFUSED
+  ARCHIVED
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+  MEDIA_MANAGER
+  AUDIO_MANAGER
+  VIDEO_MANAGER
+}
+
+enum MediaType {
+  IMAGE
+  AUDIO
+  VIDEO
+  DOCUMENT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String?
+  role          UserRole  @default(EDITOR)
+  active        Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  favorites     Favorite[]
+  playlists     Playlist[]
+  analytics     AnalyticsEvent[]
+}
+
+model Genre {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  color     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  songs     Song[]
+  artists   Artist[]
+}
+
+model Artist {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  bio         String?       @db.Text
+  photoUrl    String?
+  photoAlt    String?
+  featured    Boolean       @default(false)
+  status      ContentStatus @default(DRAFT)
+  genreId     String?
+  genre       Genre?        @relation(fields: [genreId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  songs       SongArtist[]
+  videos      VideoArtist[]
+  episodes    EpisodeGuest[]
+  portfolio   PortfolioItem[]
+  socialLinks SocialLink[]
+  articles    ArticleArtist[]
+}
+
+model Song {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  description     String?       @db.Text
+  coverUrl        String?
+  coverAlt        String?
+  audioUrl        String?
+  audioUrl128     String?
+  audioUrl192     String?
+  audioUrl320     String?
+  duration        Int           @default(0)
+  releaseDate     DateTime?
+  lyrics          String?       @db.Text
+  credits         String?       @db.Text
+  producer        String?
+  composer        String?
+  writers         String?
+  tags            String[]
+  downloadEnabled Boolean       @default(false)
+  featured        Boolean       @default(false)
+  playCount       Int           @default(0)
+  status          ContentStatus @default(DRAFT)
+  publishedAt     DateTime?
+  genreId         String?
+  genre           Genre?        @relation(fields: [genreId], references: [id])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+
+  artists         SongArtist[]
+  favorites       Favorite[]
+  playlistItems   PlaylistItem[]
+  portfolio       PortfolioItem[]
+}
+
+model SongArtist {
+  id        String  @id @default(cuid())
+  songId    String
+  artistId  String
+  isPrimary Boolean @default(false)
+  song      Song    @relation(fields: [songId], references: [id], onDelete: Cascade)
+  artist    Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@unique([songId, artistId])
+  @@index([artistId])
+}
+
+model VideoCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  videos    Video[]
+}
+
+model Video {
+  id           String        @id @default(cuid())
+  title        String
+  slug         String        @unique
+  description  String?       @db.Text
+  thumbnailUrl String?
+  thumbnailAlt String?
+  videoUrl     String
+  platform     VideoPlatform @default(YOUTUBE)
+  duration     Int           @default(0)
+  releaseDate  DateTime?
+  tags         String[]
+  featured     Boolean       @default(false)
+  viewCount    Int           @default(0)
+  status       ContentStatus @default(DRAFT)
+  publishedAt  DateTime?
+  categoryId   String?
+  category     VideoCategory? @relation(fields: [categoryId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+
+  artists      VideoArtist[]
+  portfolio    PortfolioItem[]
+}
+
+model VideoArtist {
+  id       String @id @default(cuid())
+  videoId  String
+  artistId String
+  video    Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@unique([videoId, artistId])
+}
+
+model Show {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  description String?       @db.Text
+  coverUrl    String?
+  status      ContentStatus @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  episodes    Episode[]
+}
+
+model Episode {
+  id            String        @id @default(cuid())
+  showId        String
+  show          Show          @relation(fields: [showId], references: [id], onDelete: Cascade)
+  seasonNumber  Int           @default(1)
+  episodeNumber Int
+  title         String
+  slug          String        @unique
+  description   String?       @db.Text
+  thumbnailUrl  String?
+  videoUrl      String?
+  platform      VideoPlatform @default(YOUTUBE)
+  presenter     String?
+  releaseDate   DateTime?
+  tags          String[]
+  status        ContentStatus @default(DRAFT)
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  guests        EpisodeGuest[]
+
+  @@unique([showId, seasonNumber, episodeNumber])
+}
+
+model EpisodeGuest {
+  id        String  @id @default(cuid())
+  episodeId String
+  artistId  String
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  artist    Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@unique([episodeId, artistId])
+}
+
+model Service {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  description String        @db.Text
+  imageUrl    String?
+  gallery     String[]
+  process     Json?
+  benefits    String[]
+  pricing     String?
+  faq         Json?
+  sortOrder   Int           @default(0)
+  status      ContentStatus @default(PUBLISHED)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  portfolio   PortfolioItem[]
+  quoteRequests QuoteRequest[]
+}
+
+model PortfolioItem {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  description String?       @db.Text
+  imageUrl    String?
+  type        String
+  projectDate DateTime?
+  status      ContentStatus @default(PUBLISHED)
+  artistId    String?
+  artist      Artist?       @relation(fields: [artistId], references: [id])
+  serviceId   String?
+  service     Service?      @relation(fields: [serviceId], references: [id])
+  songId      String?
+  song        Song?         @relation(fields: [songId], references: [id])
+  videoId     String?
+  video       Video?        @relation(fields: [videoId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+}
+
+model ArticleCategory {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  articles  Article[]
+}
+
+model Article {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  excerpt     String?
+  content     String        @db.Text
+  coverUrl    String?
+  tags        String[]
+  status      ContentStatus @default(DRAFT)
+  publishedAt DateTime?
+  categoryId  String?
+  category    ArticleCategory? @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  artists     ArticleArtist[]
+}
+
+model ArticleArtist {
+  id        String  @id @default(cuid())
+  articleId String
+  artistId  String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  artist    Artist  @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, artistId])
+}
+
+model QuoteRequest {
+  id          String      @id @default(cuid())
+  firstName   String
+  lastName    String
+  phone       String
+  email       String
+  serviceId   String?
+  service     Service?    @relation(fields: [serviceId], references: [id])
+  serviceName String?
+  project     String?
+  budget      String?
+  desiredDate DateTime?
+  message     String      @db.Text
+  attachmentUrl String?
+  status      QuoteStatus @default(NEW)
+  notes       String?     @db.Text
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  confirmed      Boolean   @default(false)
+  confirmToken   String?   @unique
+  unsubscribeToken String? @unique
+  subscribedAt   DateTime  @default(now())
+  confirmedAt    DateTime?
+  unsubscribedAt DateTime?
+}
+
+model SocialLink {
+  id        String  @id @default(cuid())
+  platform  String
+  url       String
+  label     String?
+  sortOrder Int     @default(0)
+  active    Boolean @default(true)
+  artistId  String?
+  artist    Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Media {
+  id        String    @id @default(cuid())
+  filename  String
+  url       String
+  mimeType  String
+  size      Int
+  type      MediaType
+  alt       String?
+  createdAt DateTime  @default(now())
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  songId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  song      Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, songId])
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items     PlaylistItem[]
+}
+
+model PlaylistItem {
+  id         String   @id @default(cuid())
+  playlistId String
+  songId     String
+  sortOrder  Int      @default(0)
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  song       Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, songId])
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  event     String
+  entityType String?
+  entityId  String?
+  metadata  Json?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  sessionId String?
+  createdAt DateTime @default(now())
+
+  @@index([event])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
