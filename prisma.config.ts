@@ -9,6 +9,9 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Fallback for `prisma generate` on Vercel when env is not yet injected in postinstall
+    url:
+      process.env["DATABASE_URL"] ??
+      "postgresql://user:password@localhost:5432/dicha_studio?schema=public",
   },
 });

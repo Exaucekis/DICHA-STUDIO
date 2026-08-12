@@ -51,7 +51,14 @@ export function ContactForm() {
           {siteSettings.contactPhone && (
             <div>
               <dt className="text-xs uppercase tracking-widest text-accent">Téléphone</dt>
-              <dd className="mt-1">{siteSettings.contactPhone}</dd>
+              <dd className="mt-1">
+                <a
+                  href={`tel:${siteSettings.contactPhone.replace(/\s/g, "")}`}
+                  className="hover:text-accent"
+                >
+                  {siteSettings.contactPhone}
+                </a>
+              </dd>
             </div>
           )}
           {siteSettings.contactWhatsApp && (
@@ -64,7 +71,7 @@ export function ContactForm() {
                   rel="noopener noreferrer"
                   className="hover:text-accent"
                 >
-                  Contacter via WhatsApp
+                  {siteSettings.contactPhone || "Contacter via WhatsApp"}
                 </a>
               </dd>
             </div>

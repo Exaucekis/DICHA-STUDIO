@@ -18,8 +18,8 @@ export const siteSettings: SiteSettings = {
   siteName: "DICHA STUDIO",
   tagline: "Dicha Multi Services",
   contactEmail: "contact@dichastudio.com",
-  contactPhone: "",
-  contactWhatsApp: "",
+  contactPhone: "0977 893 094",
+  contactWhatsApp: "243977893094",
   socialLinks: [],
 };
 
@@ -172,8 +172,7 @@ export const artists: Artist[] = [
     slug: "maya-r",
     name: "Maya R.",
     bio: "Voix R&B contemporaine, esthétique premium et écritures sensibles.",
-    photoUrl: visuals.rnb,
-    photoAlt: "Maya R.",
+    photoUrl: visuals.artistAlt,
     genre: "R&B",
     genreSlug: "rnb",
     featured: true,
@@ -202,8 +201,7 @@ export const videos: Video[] = [
     id: "2",
     slug: "urban-echo-teaser",
     title: "Urban Echo — Teaser",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&q=80",
+    thumbnailUrl: visuals.crowd,
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     platform: "YOUTUBE",
     duration: 45,
@@ -217,8 +215,7 @@ export const videos: Video[] = [
     id: "3",
     slug: "studio-session-behind",
     title: "Session studio — Coulisses",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1598488035139-bdbb2231ceea?w=800&q=80",
+    thumbnailUrl: visuals.studio,
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     platform: "YOUTUBE",
     duration: 312,
@@ -265,8 +262,7 @@ export const episodes: Episode[] = [
     slug: "episode-02-trap-culture",
     title: "Trap & Culture urbaine",
     description: "Exploration de la scène trap et des tendances créatives.",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+    thumbnailUrl: visuals.trap,
     videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     platform: "YOUTUBE",
     seasonNumber: 1,
@@ -323,8 +319,7 @@ export const services: Service[] = [
     title: "Production musicale",
     description:
       "Création de beats, arrangements et direction artistique pour vos projets musicaux.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1511379938549-c8f198794bb6?w=800&q=80",
+    imageUrl: visuals.rnb,
     benefits: ["TRAP", "AMAPIANO", "R&B", "SÉBÈNE"],
   },
   {
@@ -333,8 +328,7 @@ export const services: Service[] = [
     title: "Tournage & Réalisation",
     description:
       "Production audiovisuelle complète : clips, trailers, teasers et contenus premium.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1611162617474-5b21e939e113?w=800&q=80",
+    imageUrl: visuals.video,
     benefits: ["Direction artistique", "Équipe complète", "Post-production intégrée"],
   },
   {
@@ -342,32 +336,28 @@ export const services: Service[] = [
     slug: "montage-video",
     title: "Montage vidéo",
     description: "Montage cinématographique, étalonnage et finition pour tous formats.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&q=80",
+    imageUrl: visuals.mixer,
   },
   {
     id: "6",
     slug: "design-graphique",
     title: "Design graphique",
     description: "Identité visuelle, pochettes, visuels promo et direction créative.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80",
+    imageUrl: visuals.design,
   },
   {
     id: "7",
     slug: "promotion",
     title: "Promotion",
     description: "Stratégie de visibilité digitale pour vos sorties et projets artistiques.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&q=80",
+    imageUrl: visuals.social,
   },
   {
     id: "8",
     slug: "emissions",
     title: "Émissions",
     description: "Production et diffusion de programmes audiovisuels comme DICHA Briefing.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&q=80",
+    imageUrl: visuals.briefing,
   },
 ];
 
@@ -391,8 +381,7 @@ export const articles: Article[] = [
     excerpt: "Le programme audiovisuel de DICHA STUDIO démarre sa première saison.",
     content:
       "DICHA Briefing explore la culture musicale et audiovisuelle à travers des épisodes, invités et coulisses du studio.",
-    coverUrl:
-      "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&q=80",
+    coverUrl: visuals.briefing,
     category: "Émissions",
     tags: ["briefing", "émission", "studio"],
     publishedAt: "2026-02-01",
@@ -405,8 +394,7 @@ export const portfolioItems: PortfolioItem[] = [
     slug: "midnight-pulse-production",
     title: "Midnight Pulse — Production complète",
     description: "Production, mixage et visuel pour la sortie amapiano.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=800&q=80",
+    imageUrl: visuals.amapiano,
     type: "Production musicale",
     projectDate: "2026-03-15",
     artist: "DICHA Collective",
@@ -416,8 +404,7 @@ export const portfolioItems: PortfolioItem[] = [
     id: "2",
     slug: "urban-echo-clip",
     title: "Urban Echo — Clip",
-    imageUrl:
-      "https://images.unsplash.com/photo-1611162617474-5b21e939e113?w=800&q=80",
+    imageUrl: visuals.video,
     type: "Clip",
     projectDate: "2026-02-28",
     artist: "KZ Flow",

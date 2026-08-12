@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DICHA STUDIO
 
-## Getting Started
+Site Next.js de DICHA STUDIO — musique, visuels et culture.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router) + React 19 + Tailwind CSS 4
+- Prisma 7 + PostgreSQL (`pg` adapter)
+- Déploiement cible : [Vercel](https://vercel.com)
+
+## Développement local
 
 ```bash
+npm install
+cp .env.example .env
+# renseigner DATABASE_URL (PostgreSQL)
+npm run db:generate
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Le contenu public actuel s’appuie sur des données mock ; Prisma est prêt pour brancher la base.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Déploiement Vercel
 
-## Learn More
+1. Importer le repo GitHub : [Exaucekis/DICHA-STUDIO](https://github.com/Exaucekis/DICHA-STUDIO)
+2. Framework : **Next.js** (détecté automatiquement via `vercel.json`)
+3. Build Command : `npm run build` (`prisma generate && next build`)
+4. Install Command : `npm install` (lance aussi `postinstall` → `prisma generate`)
+5. Ajouter les variables d’environnement (Production + Preview) :
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Obligatoire | Description |
+| --- | --- | --- |
+| `DATABASE_URL` | Oui* | URL PostgreSQL (`sslmode=require` recommandé) |
+| `NEXT_PUBLIC_SITE_URL` | Oui | URL publique (`https://….vercel.app` ou domaine custom) |
+| `AUTH_SECRET` | Recommandé | Secret aléatoire long |
+| `NEXT_PUBLIC_ACCENT_COLOR` | Non | `#03A7A8` (couleur logo) |
+| `BLOB_READ_WRITE_TOKEN` | Non | Si vous utilisez Vercel Blob |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+\* Même si le front tourne encore sur du mock, `prisma generate` / le client généré nécessitent la config Prisma. Fournissez une URL Postgres valide (Neon, Prisma Postgres, Supabase, etc.).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+6. Deploy → vérifier le build dans les logs Vercel.
 
-## Deploy on Vercel
+### Base de données
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Après le premier deploy réussi :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# localement, pointant vers la DATABASE_URL de prod/preview
+npx prisma db push
+# ou plus tard : npx prisma migrate deploy
+```
+
+### Domaine
+
+Dans Vercel → Project → Domains, ajouter le domaine custom et mettre à jour `NEXT_PUBLIC_SITE_URL`.
+
+## Scripts utiles
+
+| Script | Rôle |
+| --- | --- |
+| `npm run dev` | Serveur local |
+| `npm run build` | Build production (Prisma + Next) |
+| `npm run db:generate` | Génère le client Prisma |
+| `npm run db:push` | Pousse le schéma vers la DB |
+| `npm run lint` | ESLint |
+
+## Contact
+
+Téléphone / WhatsApp : **0977 893 094**
